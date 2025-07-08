@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 export default function AddTransaction() {
   const router = useRouter();
@@ -37,14 +38,62 @@ export default function AddTransaction() {
 
   return (
     <div className="max-w-md mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">Add Transaction</h1>
-      <form onSubmit={handleSubmit} className="space-y-4">
-        {error && <p className="text-red-500">{error}</p>}
-        <Input type="number" name="amount" placeholder="Amount" value={form.amount} onChange={handleChange} />
-        <Input type="date" name="date" value={form.date} onChange={handleChange} />
-        <Input type="text" name="description" placeholder="Description" value={form.description} onChange={handleChange} />
-        <Button type="submit">Add</Button>
-      </form>
+      <h1 className="text-2xl font-bold mb-4 text-center">Add Transaction</h1>
+
+      <div className="bg-white shadow-md rounded-lg p-6">
+        <form onSubmit={handleSubmit} className="space-y-4">
+          {error && (
+            <p className="text-red-500 text-center">{error}</p>
+          )}
+
+          <div>
+            <Label htmlFor="amount">Amount</Label>
+            <Input
+              type="number"
+              name="amount"
+              id="amount"
+              placeholder="Enter amount"
+              value={form.amount}
+              onChange={handleChange}
+            />
+          </div>
+
+          <div>
+            <Label htmlFor="date">Date</Label>
+            <Input
+              type="date"
+              name="date"
+              id="date"
+              value={form.date}
+              onChange={handleChange}
+            />
+          </div>
+
+          <div>
+            <Label htmlFor="description">Description</Label>
+            <Input
+              type="text"
+              name="description"
+              id="description"
+              placeholder="Description"
+              value={form.description}
+              onChange={handleChange}
+            />
+          </div>
+
+          <div className="flex gap-2 mt-4">
+            <Button type="submit" className="w-full">Add Transaction</Button>
+            <Button
+              type="button"
+              variant="outline"
+              className="w-full"
+              onClick={() => router.push('/')}
+            >
+              Cancel
+            </Button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 }
