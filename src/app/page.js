@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 
 export default function HomePage() {
   const [transactions, setTransactions] = useState([]);
@@ -35,6 +35,27 @@ export default function HomePage() {
     month,
     amount: monthlyData[month]
   }));
+
+  // New category data processing
+  const categoryData = {};
+  transactions.forEach(txn => {
+    categoryData[txn.category] = (categoryData[txn.category] || 0) + txn.amount;
+  });
+  const pieData = Object.keys(categoryData).map(cat => ({
+    name: cat,
+    value: categoryData[cat]
+  }));
+
+  const COLORS = ['#8884d8', '#82ca9d', '#ffc658', '#ff8042', '#8dd1e1'];
+
+  // Calculate total expenses this month
+  const thisMonth = new Date().getMonth();
+  const totalThisMonth = transactions
+    .filter(txn => new Date(txn.date).getMonth() === thisMonth)
+    .reduce((sum, txn) => sum + txn.amount, 0);
+
+  // Get last 5 transactions
+  const recentTransactions = transactions.slice(0,5);
 
   return (
     <div className="max-w-3xl mx-auto p-4">
@@ -77,6 +98,36 @@ export default function HomePage() {
           <Bar dataKey="amount" fill="#8884d8" />
         </BarChart>
       </ResponsiveContainer>
+
+      {/* Dashboard Summary */}
+      <h2 className="text-xl font-bold mt-8 mb-4">Dashboard Summary</h2>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="border rounded p-4">
+          <p className="text-sm">Total Expenses This Month</p>
+          <p className="text-xl font-bold">₹{totalThisMonth}</p>
+        </div>
+
+        <div className="border rounded p-4">
+          <p className="text-sm mb-2">Category Breakdown</p>
+          <PieChart width={200} height={200}>
+            <Pie data={pieData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={80}>
+              {pieData.map((entry, index) => (
+                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+              ))}
+            </Pie>
+            <Tooltip />
+          </PieChart>
+        </div>
+
+        <div className="border rounded p-4">
+          <p className="text-sm mb-2">Recent Transactions</p>
+          <ul className="space-y-1">
+            {recentTransactions.map(txn => (
+              <li key={txn._id} className="text-sm">₹{txn.amount} - {txn.category}</li>
+            ))}
+          </ul>
+        </div>
+      </div>
     </div>
   );
 }
