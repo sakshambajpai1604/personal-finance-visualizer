@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 export default function EditTransaction() {
   const router = useRouter();
   const { id } = useParams();
-  const [form, setForm] = useState({ amount: '', date: '', description: '' });
+  const [form, setForm] = useState({ amount: '', date: '', description: '', category: 'Food' });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
@@ -21,7 +21,8 @@ export default function EditTransaction() {
         setForm({
           amount: txn.amount,
           date: txn.date.slice(0,10),
-          description: txn.description
+          description: txn.description,
+          category: txn.category || 'Food',
         });
       }
       setLoading(false);
@@ -35,7 +36,7 @@ export default function EditTransaction() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!form.amount || !form.date || !form.description) {
+    if (!form.amount || !form.date || !form.description || !form.category) {
       setError('All fields are required');
       return;
     }
@@ -64,6 +65,11 @@ export default function EditTransaction() {
         <Input type="number" name="amount" placeholder="Amount" value={form.amount} onChange={handleChange} />
         <Input type="date" name="date" value={form.date} onChange={handleChange} />
         <Input type="text" name="description" placeholder="Description" value={form.description} onChange={handleChange} />
+        <select name="category" value={form.category} onChange={handleChange} className="w-full p-2 border rounded">
+          {['Food', 'Travel', 'Shopping', 'Bills', 'Other'].map(cat => (
+            <option key={cat} value={cat}>{cat}</option>
+          ))}
+        </select>
         <Button type="submit">Update</Button>
       </form>
     </div>
