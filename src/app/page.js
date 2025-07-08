@@ -8,9 +8,11 @@ import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pi
 export default function HomePage() {
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [budgets, setBudgets] = useState([]);
 
   useEffect(() => {
     fetchTransactions();
+    fetchBudgets();
   }, []);
 
   const fetchTransactions = async () => {
@@ -18,6 +20,12 @@ export default function HomePage() {
     const data = await res.json();
     setTransactions(data);
     setLoading(false);
+  };
+
+  const fetchBudgets = async () => {
+    const res = await fetch('/api/budgets');
+    const data = await res.json();
+    setBudgets(data);
   };
 
   const deleteTransaction = async (id) => {
